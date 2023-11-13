@@ -19,13 +19,6 @@ class MaintainInventoryLevelHeuristic:
         order_quantity = max(0, self.target_level - current_inventory)
         return order_quantity
 
-class AverageDemandHeuristic:
-    def __init__(self, demand_records):
-        self.average_demand = np.mean(demand_records)
-
-    def choose_action(self, observation):
-        return self.average_demand
-
 # Load demand records
 all_data_sets = []
 for seed in range(51, 61):  # This loop will include seeds from 51 to 60
@@ -54,9 +47,9 @@ for heuristic in heuristics:
 
         while not done:
             action = heuristic.choose_action(state)
-            print(action)
+            # print(action)
             next_state, reward, terminate, _ = env.step(action)
-            print(next_state)
+            # print(next_state)
 
             total_reward += reward
 

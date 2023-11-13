@@ -18,7 +18,7 @@ all_data_sets = []
 for seed in range(51, 61):  # This loop will include seeds from 51 to 60
     demand_record = load_demand_records(seed)
     all_data_sets.append(demand_record)
-
+print("Reinforcement Learning Model:")
 for i, data_set in enumerate(all_data_sets):
     # Initialize the environment with the current data set
 
