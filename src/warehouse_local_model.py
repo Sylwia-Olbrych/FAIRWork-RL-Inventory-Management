@@ -36,6 +36,7 @@ for i, data_set in enumerate(all_data_sets):
         action, _ = model.predict(obs)
         actions_list.append(action)  # Store the current action in the actions list
         obs, reward, done, _ = env.step(action)
+        # print(obs)
         inv_list.append(obs[0])  # Store the obs[0] value in the obs_values list
         acc_rewards_list.append(total_reward)  # Store the accumulated reward at this step
 

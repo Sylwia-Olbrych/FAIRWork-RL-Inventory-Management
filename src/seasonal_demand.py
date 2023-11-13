@@ -43,14 +43,14 @@ def load_demand_records(seed=None):
 
     return demand_hist
 
+#
+# demand_record = load_demand_records()
 
-demand_record = load_demand_records()
-
-# Plotting
-plt.figure(figsize=(10, 6))
-plt.plot(demand_record)
-plt.title("Demand Record for One Year")
-plt.xlabel("Week")
-plt.ylabel("Demand")
-plt.grid(True)
-plt.show()
+# # Plotting
+# plt.figure(figsize=(10, 6))
+# plt.plot(demand_record)
+# plt.title("Demand Record for One Year")
+# plt.xlabel("Week")
+# plt.ylabel("Demand")
+# plt.grid(True)
+# plt.show()

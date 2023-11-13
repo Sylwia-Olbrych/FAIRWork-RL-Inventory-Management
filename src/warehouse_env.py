@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import gym
 import numpy as np
@@ -33,6 +32,7 @@ class InvOptEnv(gym.Env):
         self.action_list = []
         self.action_space = Box(low=0, high=self.capacity, shape=(1,), dtype=np.float32)
         self.reward_list = []
+
         obs_low = np.array([0] * (1 + 6), dtype=np.float32)
         obs_high = np.array([self.capacity] + [1] * 6, dtype=np.float32)
         self.observation_space = Box(low=obs_low, high=obs_high, dtype=np.float32)
