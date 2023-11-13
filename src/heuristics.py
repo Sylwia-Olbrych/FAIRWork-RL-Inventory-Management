@@ -15,7 +15,7 @@ class MaintainInventoryLevelHeuristic:
         self.target_level = target_level
 
     def choose_action(self, observation):
-        current_inventory = observation[0]  # Assuming inventory level is at index 0 of the observation
+        current_inventory = observation[0]
         order_quantity = max(0, self.target_level - current_inventory)
         return order_quantity
 
@@ -35,13 +35,12 @@ for seed in range(51, 61):  # This loop will include seeds from 51 to 60
 # Create the heuristics
 heuristics = [
     FixedQuantityHeuristic(fixed_quantity=6),
-    MaintainInventoryLevelHeuristic(target_level=35),  # Replace with your desired target level
+    MaintainInventoryLevelHeuristic(target_level=35)
 ]
 
 # Create lists to store the rewards for each heuristic
 fixed_rewards = []
 maintain_inventory_level_rewards = []
-windowed_average_rewards = []
 
 # Simulate the environment using each heuristic
 for heuristic in heuristics:
