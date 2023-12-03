@@ -1,6 +1,7 @@
 import numpy as np
 # import matplotlib.pyplot as plt
 
+
 def load_demand_records():
     np.random.seed(0)
     demand_hist = []
@@ -27,3 +28,5 @@ def load_demand_records():
     return demand_hist
 
 
+def convert_day_to_month_fraction():
+    return None

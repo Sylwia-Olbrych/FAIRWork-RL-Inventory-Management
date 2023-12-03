@@ -1,52 +1,30 @@
-# This script is designed to load trained model and test model
-# with test set
+# This script is designed to load trained model and test model with test set
 
 import wandb
 from warehouse_env import InvOptEnv
 from seasonal_demand import load_demand_records
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
-
-
+import os
 
 # Define the username, project name, and run ID of the run where the model is saved
 username = 'team-friendship'
-project = 'warehouse-sweep-v18-seasonal-set'
-run_id = 'k1abvzso' # '39ea3gcx'
+project = 'warehouse-sweep-v22-bulkdisc'
+run_id = '3eb8q3hk'
 
 # Initialize W&B for the run where the model is saved
 wandb.init(entity=username, project=project, id=run_id)
-model_filename = "model_seasonal_extended.h5"
+model_filename = "model_bulkdisc.h5"
 
 # Restore the model file "model.h5" from the specified run
 best_model = wandb.restore('model_seasonal_extended.h5', run_path=f"{username}/{project}/{run_id}")
 
-
 # Create the PPO model with the same configuration used during training
-model = PPO.load(best_model.name)
-
-# Create the PPO model with the same configuration used during training
-model = PPO.load(best_model.name)
-
-
-
-# import os
-#
-# # Save the model locally
-# local_model_filename = "local_model_seasonal_extended"
-# model.save(local_model_filename)
-#
-# # Check if the model file exists locally
-# if os.path.isfile(local_model_filename):
-#     print(f"Model '{local_model_filename}' found locally. You can proceed to load and use it.")
-# else:
-#     print(f"Model '{local_model_filename}' not found locally. Make sure the model is saved with the correct filename.")
-
-import os
+model = PPO.load(best_model.name)   # type: ignore
 
 # Get the absolute path to the directory where you want to save the model
-model_save_dir = "/Users/melodytung/PycharmProjects/FAIRWork-RL-Inventory-Management/src"
-local_model_filename = "local_model_seasonal_extended"
+model_save_dir = os.getcwd()  #"/src"
+local_model_filename = "model_w_bulk_discount"
 
 # Create the directory if it does not exist
 if not os.path.exists(model_save_dir):
@@ -87,20 +65,15 @@ for i, data_set in enumerate(all_data_sets):
     total_reward = 0  # Initialize the total reward variable
 
     while not done:
-        action, _ = model.predict(obs)
+        action, _ = model.predict(obs)  # type: ignore
         actions_list.append(action)  # Store the current action in the actions list
-        obs, reward, done, _ = env.step(action)
-        inv_list.append(obs[0])  # Store the obs[0] value in the obs_values list
+        obs, reward, done, _ = env.step(action)  # type: ignore
+        inv_list.append(obs[0])  # type: ignore # Store the obs[0] value in the obs_values list
         acc_rewards_list.append(total_reward)  # Store the accumulated reward at this step
 
-        total_reward += reward  # Accumulate the reward at each step
+        total_reward += reward  # type: ignore
 
         # Increment the counter
         counter += 1
     print(f"Total reward of data set {i + 1} : {total_reward}")
     # print("Total Steps:", counter)
-
-
-
-
-

@@ -1,4 +1,4 @@
-Developers: Zi Xuan(Melody) Tung, Alexander Nasuta, Sylwia Olbrych
+Developers: Zi Xuan (Melody) Tung, Alexander Nasuta, Sylwia Olbrych
 
 # Warehouse Optimization with Reinforcement Learning
 
@@ -15,7 +15,6 @@ The goal of this project is to develop a reinforcement learning agent that optim
 - `warehouse_train.py`: Trains the PPO model with hyperparameter tuning.
 - `warehouse_solve.py`: Conducts hyperparameter tuning experiments using WandB.
 - `warehouse_restore.py`: Tests the trained model with different demand patterns.
-- `README.md`: This file.
 
 ## Getting Started
 1. Clone the repository to your local machine.

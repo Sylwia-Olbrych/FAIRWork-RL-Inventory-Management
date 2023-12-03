@@ -9,8 +9,9 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
-
 # Custom callback for tracking timesteps and logging to wandb
+
+
 class CustomCallback(BaseCallback):
     def __init__(self, verbose=1):
         super(CustomCallback, self).__init__(verbose)
@@ -41,20 +42,29 @@ class CustomCallback(BaseCallback):
             "Best Mean Reward at Timestep": self.best_timestep
         })
 
-
-
-
 # Define the username, project name, and run ID of the best run
+
+
 username = 'team-friendship'
-project = 'warehouse-sweep-v18-seasonal-set'
-run_id = 'k1abvzso'
+project = 'warehouse-sweep-v23'
+run_id = 'qtkyuemg'
 
 # Initialize WandB for the best run
 wandb.init(entity=username, project=project, id=run_id, resume=True)
 
 # Load the best model's configuration
+# config = wandb.config
+# print(config)
+# learning_rate = wandb.config.get('learning_rate')  # Use .get() to avoid KeyError
+# print(learning_rate)
+# n_epochs = wandb.config.get('n_epochs')
+# print(n_epochs)
+# gae_lambda = wandb.config.get('gae_lambda')
+# print(gae_lambda)
+#
+# # # Load the best model's configuration
 config = wandb.config
-print(config)
+# print(config)
 learning_rate = config.learning_rate
 n_epochs = config.n_epochs
 gae_lambda = config.gae_lambda
@@ -70,8 +80,9 @@ for i, data_set in enumerate(all_data_sets):
     print(f"Processing data set {i + 1} of {len(all_data_sets)}")
     env = DummyVecEnv([lambda: InvOptEnv(data_set)])
 
-
     # Create the PPO model using the best hyperparameters
+    # model = PPO('MlpPolicy', env, learning_rate=learning_rate, verbose=1, n_epochs=n_epochs,
+    #             gae_lambda=gae_lambda)
     model = PPO('MlpPolicy', env, learning_rate=learning_rate, verbose=1, n_epochs=n_epochs,
                 gae_lambda=gae_lambda)
 
@@ -89,8 +100,8 @@ for i, data_set in enumerate(all_data_sets):
 
     # Add EvalCallback for periodic evaluation and logging
     eval_callback = EvalCallback(eval_env, callback_on_new_best=custom_callback,
-                                 best_model_save_path=os.path.join(wandb.run.dir, "best_model"),
-                                 log_path=wandb.run.dir, eval_freq=100000, verbose=1)
+                                 best_model_save_path=os.path.join(wandb.run.dir, "best_model"),       # type: ignore
+                                 log_path=wandb.run.dir, eval_freq=100000, verbose=1)   # type: ignore
     wandb.log({'best_mean_reward': eval_callback.best_mean_reward})
 
     model.learn(total_timesteps, callback=[custom_callback, eval_callback])
@@ -102,8 +113,8 @@ mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=20)
 wandb.log({'mean_reward': mean_reward})
 
 # Save the updated model
-model.save(os.path.join(wandb.run.dir, "model_seasonal_extended.h5"))
+model.save(os.path.join(wandb.run.dir, "model_seasonal_extended.h5"))   # type: ignore
 
 
 # Finish the WandB run
-wandb.run.finish()
+wandb.run.finish()  # type: ignore

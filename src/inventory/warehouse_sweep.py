@@ -6,16 +6,19 @@
 
 import os
 import wandb
-import numpy as np
+# import numpy as np
 from warehouse_env import InvOptEnv
 from seasonal_demand import load_demand_records
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
-import matplotlib.pyplot as plt
+from stable_baselines3.common.callbacks import BaseCallback
+# EvalCallback
+# import matplotlib.pyplot as plt
 
 # Custom callback for tracking timesteps and logging to wandb
+
+
 class CustomCallback(BaseCallback):
     def __init__(self, verbose=1):
         super(CustomCallback, self).__init__(verbose)
@@ -27,6 +30,8 @@ class CustomCallback(BaseCallback):
         return True  # Continue training
 
 # Define sweep config
+
+
 sweep_configuration = {
     'method': 'bayes',
     'name': 'sweep_bayes',
@@ -53,14 +58,17 @@ sweep_configuration = {
 # Initialize sweep and give name ( optional actually )
 sweep_id = wandb.sweep(
     sweep=sweep_configuration,
-    project='warehouse-sweep-v18-seasonal-set'
+    project='warehouse-sweep-v23'
 )
 
 # Generate demand records for all seeds
 all_data_sets = []
+
+
 for seed in range(50):
     demand_record = load_demand_records(seed)
     all_data_sets.append(demand_record)
+
 
 def main():
     run = wandb.init()
@@ -83,7 +91,7 @@ def main():
                     gae_lambda=gae_lambda)  # , ent_coef=ent_coef, vf_coef=vf_coef)
 
         # Set the total number of timesteps for training
-        total_timesteps = int(2e4)
+        total_timesteps = int(1e4)
         model.learn(total_timesteps)
 
     mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=20)
@@ -92,10 +100,8 @@ def main():
     wandb.log({'mean_reward': mean_reward})
 
     # Save the trained model in wandb.run.dir
-    model.save(os.path.join(wandb.run.dir, "model_seasonal.h5"))
+    model.save(os.path.join(wandb.run.dir, "model_seasonal.h5"))    # type: ignore
 
 
 # Start sweep job
-wandb.agent(sweep_id, function=main, count=100)
-
-
+wandb.agent(sweep_id, function=main, count=60)
