@@ -101,7 +101,7 @@ for i, data_set in enumerate(all_data_sets):
         plt.legend()
 
         plt.tight_layout()
-        # plt.show()
+        plt.show()
 
         print(f"Total reward of data set {i + 1} ({heuristic.__class__.__name__}): {total_reward}")
         # print("Total Steps:", counter)
