@@ -2,7 +2,7 @@ import gymnasium
 import numpy as np
 from gymnasium.spaces import Box
 from gymnasium.envs.registration import register
-from .seasonal_demand import load_demand_records  # , convert_day_to_month_fraction
+from seasonal_demand import load_demand_records  # , convert_day_to_month_fraction
 from gym import Env
 from typing import TypeVar
 

@@ -14,4 +14,3 @@ def test_env():
 
     # Check the environment
     check_env(env)
-

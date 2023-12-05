@@ -1,100 +1,47 @@
-import numpy as np
 from warehouse_env import InvOptEnv
 from seasonal_demand import load_demand_records
-import matplotlib.pyplot as plt
+from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import DummyVecEnv
+import os
 
-class FixedQuantityHeuristic:
-    def __init__(self, fixed_quantity):
-        self.fixed_quantity = fixed_quantity
+# Get the absolute path to the directory where you want to save the model
+model_save_dir = "/Users/melodytung/PycharmProjects/FAIRWork-RL-Inventory-Management/src/inventory"
+local_model_filename = "model_v23"
 
-    def choose_action(self, observation):
-        return self.fixed_quantity
+# Get the absolute path to the model file
+model_file_path = os.path.join(model_save_dir, local_model_filename)
 
-class MaintainInventoryLevelHeuristic:
-    def __init__(self, target_level):
-        self.target_level = target_level
+# Load the model
+model = PPO.load(model_file_path)
 
-    def choose_action(self, observation):
-        current_inventory = np.atleast_1d(observation[0])[0]
-        order_quantity = np.maximum(0, self.target_level - current_inventory)
-        return order_quantity
-
-# Load demand records
 all_data_sets = []
-for seed in range(51, 61):
+for seed in range(51, 61):  # This loop will include seeds from 51 to 60
     demand_record = load_demand_records(seed)
     all_data_sets.append(demand_record)
 
-# Create the heuristics
-heuristics = [
-    FixedQuantityHeuristic(fixed_quantity=6),
-    MaintainInventoryLevelHeuristic(target_level=35)
-]
-
-# Lists to store data for plotting
-demand_records_plot = []
-
-# Simulate the environment using each heuristic
 for i, data_set in enumerate(all_data_sets):
     # Initialize the environment with the current data set
-    env = InvOptEnv(data_set)
-    state = env.reset()
+
+    env = DummyVecEnv([lambda: InvOptEnv(data_set)])
+    obs = env.reset()
     done = False
 
-    # Lists to store data for plotting
-    demand_records_plot.append(data_set)
-    action_plot = []    # type: ignore
-    inventory_level_plot = []   # type: ignore
+    actions_list = []  # Initialize an empty list to store the actions
+    acc_rewards_list = []
+    inv_list = []  # Initialize an empty list to store the obs[0] values
+    counter = 0  # Initialize the counter variable
+    total_reward = 0  # Initialize the total reward variable
 
-    for heuristic in heuristics:
-        actions_list = []  # Initialize an empty list to store the actions
-        inv_list = []  # Initialize an empty list to store the obs[0] values
-        counter = 0  # Initialize the counter variable
-        total_reward = 0  # Initialize the total reward variable
+    while not done:
+        action, _ = model.predict(obs)
+        actions_list.append(action)  # Store the current action in the actions list
+        obs, reward, done, _ = env.step(action)
+        inv_list.append(obs[0])  # Store the obs[0] value in the obs_values list
+        acc_rewards_list.append(total_reward)  # Store the accumulated reward at this step
 
-        while not done:
-            action = heuristic.choose_action(state) # type: ignore
-            next_state, reward, terminate, _, _ = env.step(action)
+        total_reward += reward  # Accumulate the reward at each step
 
-            actions_list.append(action)  # Store the current action in the actions list
-            inv_list.append(next_state[0])
-            total_reward += reward  # Accumulate the reward at each step
-            counter += 1
-
-            if terminate:
-                break
-
-            state = next_state
-
-        # Plotting
-        plt.figure(figsize=(10, 8))
-
-        # Plot the demand record
-        plt.subplot(3, 1, 1)
-        plt.plot(range(len(data_set)), data_set, label='Demand Record', color='green')
-        plt.xlabel('Time Step')
-        plt.ylabel('Demand')
-        plt.title('Demand Record Over Time')
-        plt.legend()
-
-        # Plot the action
-        plt.subplot(3, 1, 2)
-        plt.plot(range(counter), actions_list, label=f"{heuristic.__class__.__name__} Action")
-        plt.xlabel('Time Step')
-        plt.ylabel('Action Value')
-        plt.title('Action Over Time')
-        plt.legend()
-
-        # Plot the inventory level
-        plt.subplot(3, 1, 3)
-        plt.plot(range(counter), inv_list, label='Inventory Level', color='orange')
-        plt.xlabel('Time Step')
-        plt.ylabel('Inventory Level')
-        plt.title('Inventory Level Over Time')
-        plt.legend()
-
-        plt.tight_layout()
-        plt.show()
-
-        print(f"Total reward of data set {i + 1} ({heuristic.__class__.__name__}): {total_reward}")
-        print("Total Steps:", counter)
+        # Increment the counter
+        counter += 1
+    print(f"Total reward of data set {i + 1} : {total_reward}")
+    # print("Total Steps:", counter)

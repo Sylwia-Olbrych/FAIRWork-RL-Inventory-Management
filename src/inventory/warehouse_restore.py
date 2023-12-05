@@ -9,8 +9,8 @@ import os
 
 # Define the username, project name, and run ID of the run where the model is saved
 username = 'team-friendship'
-project = 'warehouse-sweep-v22-bulkdisc'
-run_id = '3eb8q3hk'
+project = 'warehouse-sweep-v23'
+run_id = 'qtkyuemg'
 
 # Initialize W&B for the run where the model is saved
 wandb.init(entity=username, project=project, id=run_id)
@@ -24,7 +24,7 @@ model = PPO.load(best_model.name)   # type: ignore
 
 # Get the absolute path to the directory where you want to save the model
 model_save_dir = os.getcwd()  #"/src"
-local_model_filename = "model_w_bulk_discount"
+local_model_filename = "model_v23"
 
 # Create the directory if it does not exist
 if not os.path.exists(model_save_dir):
