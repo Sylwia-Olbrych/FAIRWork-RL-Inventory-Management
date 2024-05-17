@@ -8,9 +8,9 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 import os
 
 # Define the username, project name, and run ID of the run where the model is saved
-username = 'team-friendship'
-project = 'warehouse-sweep-v23'
-run_id = 'qtkyuemg'
+username = 'username'
+project = 'warehouse-sweep'
+run_id = 'xxx'
 
 # Initialize W&B for the run where the model is saved
 wandb.init(entity=username, project=project, id=run_id)
